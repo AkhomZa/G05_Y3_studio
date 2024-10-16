@@ -9,18 +9,33 @@ body {
     font-family: Arial, sans-serif; /* Set a default font */
 }
 
+h1{
+    padding: 50px;
+}
+
+#description {
+    margin-left : 20;
+    font-weight: bold;
+}
+
 /* Container for the chart and table */
 .container {
     display: flex; /* Use Flexbox for layout */
     justify-content: space-between; /* Space between the items */
     align-items: flex-start; /* Align items to the top */
     margin-top: 20px; /* Add some space above the container */
+    margin-bottom: 50px;
+    margin-right: 50px
 }
 
+h3{
+    text-align: center;
+}
 /* Style for the chart container */
 #chart-container {
     flex: 1; /* Take equal space */
-    margin-right: 10px; /* Add space between chart and table */
+    margin-right: 20px; /* Add space between chart and table */
+    padding-left: 50px;
 }
 
 /* Style for the table container */
@@ -39,3 +54,8 @@ th, td {
     text-align: left; /* Align text to the left */
     border: 1px solid #ccc; /* Add border */
 }
+
+p {
+    padding-left: 50px;
+}
+

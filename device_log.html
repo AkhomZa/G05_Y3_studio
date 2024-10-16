@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Device Log</title>
-    <link rel="stylesheet" href="device_log.css"> <!-- import style.css -->
+    <link rel="stylesheet" href="device_log_style.css"> <!-- import style.css -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- load library chart.js -->
 </head>
 <body>
@@ -19,8 +19,8 @@
     <div class="container"> <!-- Added a container for flexbox -->
 
         <div id="chart-container"> <!--chart-->
-            <h3>Chart</h3> <!--name chart-->
             <canvas id="deviceChart"></canvas>
+            <h3>Hourly Energy Consumption</h3> <!--name chart-->
         </div>
 
         <div id="table_container"> <!--table conatiner-->
@@ -37,8 +37,8 @@
         </div>
     </div>
 
-    <script src="device_table.js"></script> <!--for show table-->
-    <script src="device_properties.js"></script> <!--for show device discription-->
-    <script src="device_chart.js"></script> <!--for show chart-->
+    <script src="device_log_table.js"></script> <!--for show table-->
+    <script src="device_log_description.js"></script> <!--for show device discription-->
+    <script src="device_log_chart.js"></script> <!--for show chart-->
 </body>
 </html>

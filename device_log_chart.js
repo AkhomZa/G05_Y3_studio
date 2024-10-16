@@ -32,7 +32,8 @@ document.addEventListener('DOMContentLoaded', () => {
                   label: 'Energy Usage (kWh)', // ชื่อกราฟ
                   data: data, // ข้อมูลการใช้งาน
                   borderColor: 'rgb(155,135,12)', // สีของเส้นกราฟ
-                  fill: false // ไม่เติมสีใต้กราฟ
+                  fill: false, // ไม่เติมสีใต้กราฟ
+                  tension : 0.5 //make line curve
               }]
           },
           options: {

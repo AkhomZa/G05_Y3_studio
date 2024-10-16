@@ -10,10 +10,10 @@ document.addEventListener('DOMContentLoaded', () => {
               const cols = row.split(','); // แยกข้อมูลคอลัมน์
               if (cols.length > 1) { // ตรวจสอบว่าแถวไม่ว่างหรือไม่
                   const newRow = table.insertRow(); // สร้างแถวใหม่ใน tbody
-                  cols.forEach(col => { // เติมข้อมูลในแต่ละคอลัมน์
-                      const newCell = newRow.insertCell();
-                      newCell.textContent = col; // เพิ่มข้อมูลลงในเซลล์
-                  });
+                  for (let i = 1; i < cols.length; i++) {  //skip data in col 1 (date)
+                    const newCell = newRow.insertCell();
+                    newCell.textContent = cols[i]; // เพิ่มข้อมูลลงในเซลล์
+                }
               }
           });
 
