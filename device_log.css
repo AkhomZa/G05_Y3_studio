@@ -1,0 +1,41 @@
+/* Reset margin and padding for all elements */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box; /* Include padding and border in element's total width and height */
+}
+
+body {
+    font-family: Arial, sans-serif; /* Set a default font */
+}
+
+/* Container for the chart and table */
+.container {
+    display: flex; /* Use Flexbox for layout */
+    justify-content: space-between; /* Space between the items */
+    align-items: flex-start; /* Align items to the top */
+    margin-top: 20px; /* Add some space above the container */
+}
+
+/* Style for the chart container */
+#chart-container {
+    flex: 1; /* Take equal space */
+    margin-right: 10px; /* Add space between chart and table */
+}
+
+/* Style for the table container */
+#table_container {
+    flex: 1; /* Take equal space */
+}
+
+/* Style the table */
+table {
+    width: 100%; /* Full width */
+    border-collapse: collapse; /* Collapse borders */
+}
+
+th, td {
+    padding: 10px; /* Add padding to cells */
+    text-align: left; /* Align text to the left */
+    border: 1px solid #ccc; /* Add border */
+}
