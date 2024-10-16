@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en"> <!--default language-->
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Device log</title>
+</head>
+
+<body>
+    <h1>Energy Usage Data</h1>
+    <p id="name"> </p>
+    <p id="location"> </p>
+    <p id="type"> </p>
+
+    <table id="data-table" border="2">
+        <thead>
+            <tr>
+                <th>Time</th> <!--Table head-->
+                <th>Usage (kWh)</th> <!--Table head-->
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+    <script src="fetch_show_data.js"></script>
+    <script src="device_properties.js"></script>
+</body>
+</html>
