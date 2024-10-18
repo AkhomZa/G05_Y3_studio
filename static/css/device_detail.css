@@ -1,0 +1,78 @@
+/* device_detail.css */
+body {
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+
+#head-container {
+    padding-left: 50px;
+    padding-top: 20px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.button {
+    background-color: #04AA6D; /* Green */
+    border: none;
+    color: white;
+    padding: 16px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    transition-duration: 0.4s;
+    cursor: pointer;
+  }
+
+.button1 {
+  background-color: white; 
+  color: black; 
+  border: 2px solid #04AA6D;
+}
+
+.button:hover {
+    background-color: #04AA6D; /* Green */
+    color: white;
+}
+
+/* ใช้ flexbox สำหรับการจัดวาง */
+#container {
+    display: flex; /*make box flex */
+    justify-content: space-evenly;  /* ให้แบ่งพื้นที่เท่าๆ กัน */
+    gap: 10px;  /* เว้นระยะห่างระหว่าง chart และ table */
+}
+
+/* ปรับขนาดของตาราง */
+#table-container {
+    flex: 1;  /* expand table full */
+    max-width: 30%;  /* กำหนดความกว้างสูงสุดของตาราง */
+    overflow-x: auto;  /* ให้สามารถเลื่อนตารางไปทางแนวนอนได้หากข้อมูลเยอะ */
+}
+
+#chart-container {
+    flex: 1;  /* expand graph full */
+    max-width: 45%;  /* กำหนดความกว้างสูงสุดของกราฟ */
+    text-align: center;  /* จัดให้อยู่ตรงกลาง */
+}
+
+/* เพิ่มการจัดการให้ตารางดูดีขึ้น */
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 8px;
+    text-align: center;
+    border: 1px solid #ddd;
+}
+
+th {
+    background-color: #f4f4f4;
+}
+
+/* ให้ canvas ของกราฟมีขนาดเต็มที่ */
+canvas {
+    width: 110% !important;
+    height: auto !important; /* กำหนดความสูงของกราฟ */
+}

@@ -1,49 +1,48 @@
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, render_template, jsonify
 import os
-
-# Create the 'data' directory if it doesn't exist
-data_directory = 'K:/G05_Y3_studio/data/devices.csv'
-if not os.path.exists(data_directory):
-    os.makedirs(data_directory)
-
+import csv
 
 app = Flask(__name__)
 
-# เส้นทางหลักสำหรับหน้า HTML
-@app.route('/')
-def index():
-    return render_template('index.html')
+DEVICE_FOLDER = 'data'
 
-# เส้นทาง API สำหรับบันทึก CSV
-@app.route('/save-csv', methods=['POST'])
-def save_csv():
-    data = request.json  # รับข้อมูล JSON จากไคลเอนต์
-    devices = data.get('devices', [])
+@app.route('/device_list')
+def list_device():
+    # ค้นหาไฟล์ CSV ในโฟลเดอร์
+    device_files = [f for f in os.listdir(DEVICE_FOLDER) if f.startswith('device') and f.endswith('.csv')]
 
-    # เขียนข้อมูลลงในไฟล์ CSV
-    csv_file = 'K:/G05_Y3_studio/data/devices.csv'
-    csv_columns = ['Device No.', 'Location', 'Type']
+    # ส่งข้อมูลทั้งชื่อไฟล์เต็มและชื่อที่ตัดนามสกุลไปยัง template
+    indexed_device_files = [(index, f, f.rsplit('.', 1)[0]) for index, f in enumerate(device_files, start=1)]
+    
+    # ส่งข้อมูลไปยัง template
+    return render_template('device_list.html', device_files=indexed_device_files)
 
-    try:
-        with open(csv_file, mode='w', newline='') as file:
-            writer = csv.DictWriter(file, fieldnames=csv_columns)
-            writer.writeheader()  # เขียน header ของ CSV
 
-            for device in devices:
-                writer.writerow({
-                    'Device No.': device['number'],
-                    'Location': device['location'],
-                    'Type': device['type']
-                })
+@app.route('/device/<filename>')
+def device_detail(filename):
+    file_path = os.path.join(DEVICE_FOLDER, filename)
 
-        return jsonify({"message": "CSV saved successfully!"}), 200
+    # ตรวจสอบว่าไฟล์มีอยู่หรือไม่
+    if os.path.exists(file_path):
+        # อ่านไฟล์ CSV
+        with open(file_path, newline='') as csvfile:
+            reader = csv.reader(csvfile)
+            csv_data = [row for row in reader]  # เก็บข้อมูลในรูปแบบ list
 
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        # ตัดนามสกุลไฟล์ออกจากชื่อไฟล์
+        display_name = filename.rsplit('.', 1)[0]
+
+        # ส่งข้อมูล CSV และ display_name ไปยัง template
+        return render_template('device_detail.html', filename=display_name, csv_data=csv_data)
+    else:
+        return f"File {filename} not found.", 404
+
+
+@app.route('/device_list')
+def device_list():
+    # แสดงหน้ารายการอุปกรณ์
+    return render_template('device_list.html')
 
 
 if __name__ == '__main__':
     app.run(debug=True)
-
-
-csv_file = os.path.join(data_directory, 'devices.csv')

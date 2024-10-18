@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Device Details: {{ filename }}</title>
+    
+    <!-- เชื่อมโยงกับไฟล์ CSS แยก -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/device_detail.css') }}">
+
+    <!-- เชื่อมโยงกับ Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div id="head-container">
+        <h1>Device Details: {{ filename }}</h1>
+        <a href="{{ url_for('device_list') }}">
+            <button class="button button1">Back to Device List</button>
+        </a>
+    </div>
+
+    <!-- แสดงข้อมูลในตาราง -->
+    <div id="container">
+        <div id="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>kWh</th>
+                    </tr>
+                </thead>
+                <tbody id="data-table-body">
+                    <!-- ข้อมูลจะถูกเติมผ่าน JavaScript -->
+                </tbody>
+            </table>
+        </div>
+        <div id="chart-container">
+            <!-- show graph -->
+            <canvas id="myChart"></canvas>
+            <h2>Hourly Energy Used</h2>
+        </div>
+    </div>
+    <!-- ส่งข้อมูลไปยัง JavaScript -->
+    <script type="application/json" id="csvData">{{ csv_data | tojson }}</script>
+
+    <!-- รวม JavaScript จากไฟล์แยก -->
+    <script src="{{ url_for('static', filename='js/device_detail.js') }}"></script>
+</body>
+</html>
