@@ -14,7 +14,8 @@
 <body>
     <div id="head-container">
         <h1>Device Details: {{ filename }}</h1>
-        <a href="{{ url_for('device_list') }}">
+        <!-- เปลี่ยนจาก device_list เป็น list_device -->
+        <a href="{{ url_for('list_device') }}">
             <button class="button button1">Back to Device List</button>
         </a>
     </div>

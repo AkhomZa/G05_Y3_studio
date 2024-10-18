@@ -22,20 +22,22 @@
         </thead>
         <tbody>
             {% if device_files %}
-                {% for index, full_filename, display_name in device_files %}
+                {% for device in device_files %}
                 <tr>
-                    <td>{{ index }}</td>
-                    <td>{{ display_name }}</td>
-                    <!-- connect to route /device/filename and open new window -->
-                    <td><a href="/device/{{ full_filename }}" target="_blank">View Details</a></td>
+                    <td>{{ device.index }}</td>
+                    <td>{{ device.display_name }}</td>
+                    <td>{{ device.location }}</td>
+                    <td>{{ device.type }}</td>
+                    <td><a href="/device/{{ device.full_filename }}" target="_blank">View Details</a></td>
                 </tr>
                 {% endfor %}
             {% else %}
                 <tr>
-                    <td colspan="3">No devices found.</td>
+                    <td colspan="5">No devices found.</td>
                 </tr>
             {% endif %}
         </tbody>
+        
     </table>
 
     <!-- link to seperate javascript in project/static/js/device_list.js -->
