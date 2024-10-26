@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Device List</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="{{ url_for('static', filename='js/script.js') }}" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+<body>
+    <!-- Tab Container -->
+    <div class="tab-container">
+        <div class="tabs">
+            <h1>Menu</h1>
+            <button class="tab-button active" onclick="openTab(event, 'device_list')">List</button>
+            <button class="tab-button" onclick="openTab(event, 'device_detail')">Detail</button>
+            <button class="tab-button" onclick="openTab(event, 'analysis')">Analysis</button>
+        </div>
+        
+        <!-- Device List Tab -->
+        <div id="device_list" class="tab-content active">
+            <table>
+                <thead>
+                    <tr>
+                        <th>No.</th> <!--col1-->
+                        <th onclick="sortTable(1)">Device Name</th> <!--col2-->
+                        <th onclick="sortTable(2)">Floor</th> <!--col3-->
+                        <th onclick="sortTable(3)">Location</th> <!--col4-->
+                        <th onclick="sortTable(4)">Type</th> <!--col5-->
+                        <th>Action</th> <!--col6-->
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if device_files %} <!--if true-->
+                        {% for device in device_files %} <!--ดึงข้อมูลจาก flask ไม่ผ่าน script.js-->
+                        <tr>
+                            <td>{{ device.index }}</td>
+                            <td>{{ device.display_name }}</td>
+                            <td>{{ device.floor }}</td>
+                            <td>{{ device.location }}</td>
+                            <td>{{ device.type }}</td>
+                            <td>
+                                <a href="javascript:void(0);" onclick="viewDetails('{{ device.full_filename }}')">View Details</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="6">No devices found.</td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Device Detail Tab -->
+        <div id="device_detail" class="tab-content">
+            <h2>Device Detail</h2>
+            <div class="detail-container">
+                <div id="detail-table-container">
+                    <table id="detail_table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Time</th>
+                                <th>Data</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- ข้อมูลจากไฟล์ CSV จะแสดงที่นี่ -->
+                        </tbody>
+                    </table>
+                </div>
+                <div id="detail-chart-container">
+                    <canvas id="myChart"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Analysis Tab -->
+        <div id="analysis" class="tab-content">
+            <h2>Analysis</h2>
+            <p>Analytical content about device data will be displayed here.</p>
+        </div>
+    </div>
+</body>
+</html>

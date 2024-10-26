@@ -4,58 +4,69 @@ import csv
 
 app = Flask(__name__)
 
-DEVICE_FOLDER = 'data'
-
-@app.route('/device_list')
-def list_device():
-    # ค้นหาไฟล์ CSV ในโฟลเดอร์
-    device_files = [f for f in os.listdir(DEVICE_FOLDER) if f.startswith('device') and f.endswith('.csv')]
-
-    device_data = []
-    
-    # สำหรับแต่ละไฟล์ในโฟลเดอร์ อ่านข้อมูล CSV และดึง Location และ Type
-    for index, filename in enumerate(device_files, start=1):
-        file_path = os.path.join(DEVICE_FOLDER, filename)
-        with open(file_path, newline='') as csvfile:
-            reader = csv.reader(csvfile)
-            csv_data = [row for row in reader]  # อ่านข้อมูลทั้งหมดจากไฟล์ CSV
-
-            # ดึงข้อมูลจากแถวที่ต้องการ
-            location = csv_data[0][1] if len(csv_data) > 0 and len(csv_data[0]) > 1 else "Unknown"
-            device_type = csv_data[1][1] if len(csv_data) > 1 and len(csv_data[1]) > 1 else "Unknown"
+# Route สำหรับหน้าแรก
+@app.route('/')
+def index():
+    # อ่านไฟล์ CSV จากโฟลเดอร์ 'data'
+    device_files = []
+    for filename in os.listdir('data'): #อ่านทุกไฟล์ใน folder "data"
+        if filename.startswith('device') and filename.endswith('.csv'): #ไม่ใช้ & เพราะเป็นตัวดำเนินการทางบิต (bitwise operation)
+            file_path = os.path.join('data', filename) #สร้างไฟล์ path โดยเติม /data เข้าไปด้านหน้าเป็น /data/filename.csv
             
-            # เก็บข้อมูลในรูปแบบที่ส่งไปยัง template
-            device_data.append({
-                'index': index,
-                'full_filename': filename,
-                'display_name': filename.rsplit('.', 1)[0],  # ตัดนามสกุลออก
-                'location': location,
-                'type': device_type
-            })
+            # อ่านข้อมูลจากไฟล์ CSV
+            with open(file_path, mode='r', newline='', encoding='utf-8') as file:
+                reader = csv.reader(file)
+                
+                # อ่าน metadata และข้อมูลหลัก
+                metadata = {}
+                for row in reader:
+                    if len(metadata) < 3:  # อ่านแค่ 3 แถวแรก
+                        metadata[row[0]] = row[1]
+                        if row[0] == 'DD-MM-YYYY':  # หยุดอ่านเมื่อเจอหัวเรื่อง
+                            break
 
-    # ส่งข้อมูลไปยัง template
-    return render_template('device_list.html', device_files=device_data)
+                
+                # สร้างข้อมูลอุปกรณ์โดยดึงจาก metadata ที่อ่านได้
+                device_info = {
+                    'index': len(device_files) + 1,
+                    'display_name': filename.replace('.csv', ''), #แสดงชื่อโดยไม่แสดงนามสกุล
+                    'floor': metadata.get('floor', ''),
+                    'location': metadata.get('location', ''),
+                    'type': metadata.get('type', ''),
+                    'full_filename': filename
+                }
+                
+                device_files.append(device_info)
+
+    return render_template('index.html', device_files=device_files)
 
 
-@app.route('/device/<filename>')
-def device_detail(filename):
-    file_path = os.path.join(DEVICE_FOLDER, filename)
-
-    # ตรวจสอบว่าไฟล์มีอยู่หรือไม่
+# Route สำหรับโหลดข้อมูลรายละเอียด
+@app.route('/detail/<filename>') #รอ script.js เรียกผ่าน URL
+def detail(filename):
+    file_path = os.path.join('data', filename) #สร้าง path โดยเติม /data/<filename>.csv
     if os.path.exists(file_path):
-        # อ่านไฟล์ CSV
-        with open(file_path, newline='') as csvfile:
-            reader = csv.reader(csvfile)
-            csv_data = [row for row in reader]  # เก็บข้อมูลในรูปแบบ list
-
-        # ตัดนามสกุลไฟล์ออกจากชื่อไฟล์
-        display_name = filename.rsplit('.', 1)[0]
-
-        # ส่งข้อมูล CSV และ display_name ไปยัง template
-        return render_template('device_detail.html', filename=display_name, csv_data=csv_data)
-    else:
-        return f"File {filename} not found.", 404
-
+        details = [] #สำหรับส่งคำตอบ
+        try:
+            with open(file_path, mode='r', newline='', encoding='utf-8') as file:
+                reader = csv.reader(file)
+                
+                # ข้ามแถว metadata ส่วนบนสุด
+                for row in reader: #อ่านเรียงเป็นแถวแนวนอน
+                    if row and row[0] == 'DD-MM-YYYY':  # หาแถวที่เริ่มมีหัวเรื่อง
+                        headers = row  # เก็บหัวเรื่องจากแถวนี้
+                        break
+                
+                # อ่านข้อมูลหลักจากแถวที่มีหัวเรื่องและหลังจากนั้น
+                reader = csv.DictReader(file, fieldnames=headers) #header --> (DD-MM-YYYY,time,data)
+                for row in reader:
+                    details.append(row)
+                    
+            return jsonify(details)
+        except Exception as e:
+            print(f"Error reading {filename}: {e}")
+            return jsonify([])  # คืนค่าข้อมูลว่างถ้าเกิดข้อผิดพลาด
+    return jsonify([])
 
 if __name__ == '__main__':
     app.run(debug=True)
