@@ -1,11 +1,12 @@
 from flask import Flask, render_template, jsonify
 import os
 import csv
+import datetime
 
 app = Flask(__name__)
 
 # Route สำหรับหน้าแรก
-@app.route('/')
+@app.route('/') #ไปยังหน้าแรกสุด URL
 def index():
     # อ่านไฟล์ CSV จากโฟลเดอร์ 'data'
     device_files = []
@@ -67,6 +68,35 @@ def detail(filename):
             print(f"Error reading {filename}: {e}")
             return jsonify([])  # คืนค่าข้อมูลว่างถ้าเกิดข้อผิดพลาด
     return jsonify([])
+
+# @app.route('/data')
+# def get_today_data():
+#     # ดึงข้อมูลวันปัจจุบัน
+#     today_str = datetime.date.today().strftime("%d-%m-%Y")  # วันที่ปัจจุบัน
+#     folder_path = 'data'  # ปรับเส้นทางตามโฟลเดอร์ที่คุณใช้
+#     type_data = None #initail value
+#     total_data = 0.0 #initail value
+
+#     for filename in os.listdir(folder_path):
+#         if filename.startswith('device') and filename.endswith('.csv'):
+#             file_path = os.path.join(folder_path, filename)
+#             with open(file_path, mode='r') as file:
+#                 reader = csv.DictReader(file)
+                
+#                 for index, row in enumerate(reader):
+#                     if index == 0:
+#                         # แสดงประเภทจากแถวแรก
+#                         type_data = row['type']  # ค่าประเภทจากแถวแรก
+#                     if row['DD-MM-YYYY'] == today_str:
+#                         # รวมค่าของ data ของวันปัจจุบัน
+#                         total_data += float(row['data'])
+#     # สร้างผลลัพธ์ในรูปแบบ JSON
+#     result = {
+#         "type": type_data,
+#         "total_data": total_data
+#     }
+#     return jsonify(result)
+
 
 if __name__ == '__main__':
     app.run(debug=True)

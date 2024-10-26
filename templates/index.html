@@ -57,7 +57,7 @@
         
         <!-- Device Detail Tab -->
         <div id="device_detail" class="tab-content">
-            <h2>Device Detail</h2>
+            <h2 id="fileNameText">Device Detail</h2>
             <div class="detail-container">
                 <div id="detail-table-container">
                     <table id="detail_table">
@@ -74,15 +74,35 @@
                     </table>
                 </div>
                 <div id="detail-chart-container">
-                    <canvas id="myChart"></canvas>
+                    <canvas id="datailChart"></canvas>
                 </div>
             </div>
         </div>
         
         <!-- Analysis Tab -->
         <div id="analysis" class="tab-content">
-            <h2>Analysis</h2>
-            <p>Analytical content about device data will be displayed here.</p>
+
+            <div id="day_analysis">
+                <h2>Day Analysis</h2>
+                <p>Analytical content about device data will be displayed here.</p>
+                <canvas id="day_rank_type" width="400" height="400"></canvas>
+                <canvas id="day_rank_time"></canvas>
+            </div>
+
+            <div id="month_analysis">
+                <h2>Month Analysis</h2>
+                <p>Analytical content about device data will be displayed here.</p>
+                <canvas id="month_rank_type"></canvas>
+                <canvas id="month_rank_time"></canvas>
+            </div>
+
+            <div id="year_analysis">
+                <h2>Year Analysis</h2>
+                <p>Analytical content about device data will be displayed here.</p>
+                <canvas id="year_rank_type"></canvas>
+                <canvas id="year_rank_time"></canvas>
+            </div>
+
         </div>
     </div>
 </body>
