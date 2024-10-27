@@ -16,6 +16,29 @@ function openTab(evt, tabName) {
     evt.currentTarget.classList.add("active");
 }
 
+function sortTable(columnIndex) {
+    const table = document.querySelector("table"); // อ้างอิงถึงตาราง
+    const rows = Array.from(table.rows).slice(1); // แปลง rows เป็น array โดยข้ามหัวตาราง
+    const isAscending = table.getAttribute("data-sort-direction") !== "asc";
+    
+    rows.sort((rowA, rowB) => {
+        const cellA = rowA.cells[columnIndex].innerText.trim();
+        const cellB = rowB.cells[columnIndex].innerText.trim();
+
+        if (!isNaN(cellA) && !isNaN(cellB)) {
+            return isAscending ? cellA - cellB : cellB - cellA; // จัดการค่าตัวเลข
+        } else {
+            return isAscending ? cellA.localeCompare(cellB) : cellB.localeCompare(cellA); // จัดการค่าตัวอักษร
+        }
+    });
+
+    // นำแถวที่เรียงแล้วใส่กลับเข้าไปในตาราง
+    rows.forEach(row => table.appendChild(row));
+
+    // สลับทิศทางการเรียง
+    table.setAttribute("data-sort-direction", isAscending ? "asc" : "desc");
+}
+
 let detailChart; // ตัวแปรสำหรับเก็บอ้างอิงกราฟ
 
 function viewDetails(filename) {
@@ -133,64 +156,89 @@ function viewDetails(filename) {
         });
 }
 
+let dayRankTypeChart;
 
-// function chart_day_rank_type(time) {
-//     fetch('/data')  // ดึงข้อมูลจาก API
-//     .then(response => response.json())
-//     .then(data => {
-//         // แยกประเภทและรวมข้อมูล
-//         const labels = data.map(item => item.type);
-//         const values = data.map(item => item.total_data);
+function createDayRankTypeChart() {
+    fetch(`/data/day_rank_type`)
+        .then(response => response.json())
+        .then(result => { // data format --> "type": type_data, "total_data": total_data
+            console.log(result.data);
+            const data = result.data;
+            const types = [];
+            const totals = [];
+            for (const [type, total] of Object.entries(data)) {
+                types.push(type);
+                totals.push(total);
+            }
 
-//         const pieData = {
-//             labels: labels,
-//             datasets: [{
-//                 label: 'Device Types',
-//                 data: values,
-//                 backgroundColor: [
-//                     'rgba(255, 99, 132, 0.2)',
-//                     'rgba(54, 162, 235, 0.2)',
-//                     'rgba(255, 206, 86, 0.2)',
-//                     'rgba(75, 192, 192, 0.2)',
-//                     'rgba(153, 102, 255, 0.2)',
-//                     'rgba(255, 159, 64, 0.2)'
-//                 ],
-//                 borderColor: [
-//                     'rgba(255, 99, 132, 1)',
-//                     'rgba(54, 162, 235, 1)',
-//                     'rgba(255, 206, 86, 1)',
-//                     'rgba(75, 192, 192, 1)',
-//                     'rgba(153, 102, 255, 1)',
-//                     'rgba(255, 159, 64, 1)'
-//                 ],
-//                 borderWidth: 1
-//             }]
-//         };
+            // สร้างกราฟ
+            dayRankTypeChart = new Chart(document.getElementById('day_rank_type').getContext('2d'), {
+                type: 'doughnut',
+                data: {
+                    datasets: [{
+                        data: totals,
+                        backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'], // กำหนดสีให้กับแต่ละส่วนของกราฟ
+                    }],
+                    labels: types
+                },
+                options: { // เปลี่ยนจาก option เป็น options
+                    responsive: false,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'right' // แสดงป้ายกำกับด้านขวาของกราฟ
+                        }
+                    }
+                }
+            });
+        })
+        .catch(error => {
+            console.error('Error fetching data', error);
+        });
+}
 
-//         const config = {
-//             type: 'pie',
-//             data: pieData,
-//             options: {
-//                 responsive: true,
-//                 plugins: {
-//                     legend: {
-//                         position: 'top',
-//                     },
-//                     title: {
-//                         display: true,
-//                         text: 'Device Type Distribution'
-//                     }
-//                 }
-//             }
-//         };
+let dayRankZoneChart;
 
-//         // สร้าง Pie Chart
-//         const myPieChart = new Chart(
-//             document.getElementById('day_rank_type'),
-//             config
-//         );
-//     })
-//     .catch(error => {
-//         console.error('Error fetching data:', error);
-//     });
-// }
+function createDayRankZoneChart() {
+    fetch(`/data/day_rank_zone`)
+        .then(response => response.json())
+        .then(result => { // data format --> "floor" - "location" : zone_total_data
+            const data = result.data;
+
+            const floors_location = [];
+            const zone_totals = [];
+            for (const [floor_location, total] of Object.entries(data)) {
+                floors_location.push(floor_location);
+                zone_totals.push(total);
+            }
+            console.log(result.data);
+
+            // สร้างกราฟ
+            dayRankZoneChart = new Chart(document.getElementById('day_rank_zone').getContext('2d'), {
+                type: 'bar',
+                data: {
+                    datasets: [{
+                        data: zone_totals, // แก้ไขเป็น zone_totals
+                        backgroundColor: '#36A2EB', // กำหนดสีให้กับบาร์
+                    }],
+                    labels: floors_location
+                },
+                options: { // คุณสามารถตั้งค่า options ได้ที่นี่
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        })
+        .catch(error => {
+            console.error('Error fetching data', error);
+        });
+}
+
+document.addEventListener('DOMContentLoaded', function() { // run when html finish load
+    createDayRankTypeChart(); // create graph
+    createDayRankZoneChart();
+});

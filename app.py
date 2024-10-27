@@ -41,7 +41,6 @@ def index():
 
     return render_template('index.html', device_files=device_files)
 
-
 # Route สำหรับโหลดข้อมูลรายละเอียด
 @app.route('/detail/<filename>') #รอ script.js เรียกผ่าน URL
 def detail(filename):
@@ -69,33 +68,74 @@ def detail(filename):
             return jsonify([])  # คืนค่าข้อมูลว่างถ้าเกิดข้อผิดพลาด
     return jsonify([])
 
-# @app.route('/data')
-# def get_today_data():
-#     # ดึงข้อมูลวันปัจจุบัน
-#     today_str = datetime.date.today().strftime("%d-%m-%Y")  # วันที่ปัจจุบัน
-#     folder_path = 'data'  # ปรับเส้นทางตามโฟลเดอร์ที่คุณใช้
-#     type_data = None #initail value
-#     total_data = 0.0 #initail value
+@app.route('/data/day_rank_type')
+def get_today_type_data():
+    # ดึงข้อมูลวันปัจจุบัน
+    today_str = datetime.date.today().strftime("%d-%m-%Y")  # วันที่ปัจจุบัน
+    folder_path = 'data'  # ปรับเส้นทางตามโฟลเดอร์ที่คุณใช้
+    type_totals = {}  # dict เพื่อเก็บยอดรวมของแต่ละประเภท
 
-#     for filename in os.listdir(folder_path):
-#         if filename.startswith('device') and filename.endswith('.csv'):
-#             file_path = os.path.join(folder_path, filename)
-#             with open(file_path, mode='r') as file:
-#                 reader = csv.DictReader(file)
-                
-#                 for index, row in enumerate(reader):
-#                     if index == 0:
-#                         # แสดงประเภทจากแถวแรก
-#                         type_data = row['type']  # ค่าประเภทจากแถวแรก
-#                     if row['DD-MM-YYYY'] == today_str:
-#                         # รวมค่าของ data ของวันปัจจุบัน
-#                         total_data += float(row['data'])
-#     # สร้างผลลัพธ์ในรูปแบบ JSON
-#     result = {
-#         "type": type_data,
-#         "total_data": total_data
-#     }
-#     return jsonify(result)
+    # วนลูปอ่านไฟล์ในโฟลเดอร์
+    for filename in os.listdir(folder_path):
+        if filename.startswith('device') and filename.endswith('.csv'):
+            file_path = os.path.join(folder_path, filename)
+            with open(file_path, mode='r') as file:
+                for _ in range(2):  # ข้ามบรรทัดที่ 1 และ 2
+                    file.readline()  # อ่านและผ่านไป
+
+                type_data = file.readline().strip().split(',')[1]  # ค่าประเภทจากบรรทัดที่ 3
+                reader = csv.DictReader(file)
+                for row in reader:
+
+
+                    if row['DD-MM-YYYY'] == today_str: #หาก row[0] เป็นวันปัจจุบัน
+                        # เพิ่มค่าของ data ให้กับประเภทนั้นๆ
+                        total_data = float(row['data']) #แปลงข้อมูล row[2] เป็น float
+                        if type_data in type_totals:
+                            type_totals[type_data] += total_data
+                        else:
+                            type_totals[type_data] = total_data
+
+    # ส่งผลลัพธ์ในรูปแบบ JSON
+    result = {
+        "data": type_totals  # คืนค่าประเภทและยอดรวมของแต่ละประเภท
+    }
+    return jsonify(result)
+
+@app.route('/data/day_rank_zone')  # floor, location, data
+def get_today_zone_data():
+    # ดึงข้อมูลวันปัจจุบัน
+    today_str = datetime.date.today().strftime("%d-%m-%Y")  # วันที่ปัจจุบัน
+    folder_path = 'data'  # ปรับเส้นทางตามโฟลเดอร์ที่คุณใช้
+    zone_totals = {}  # dict เพื่อเก็บยอดรวมของแต่ละประเภท
+
+    # วนลูปอ่านไฟล์ในโฟลเดอร์
+    for filename in os.listdir(folder_path):
+        if filename.startswith('device') and filename.endswith('.csv'):
+            file_path = os.path.join(folder_path, filename)
+            with open(file_path, mode='r') as file:
+                floor_data = file.readline().strip().split(',')[1]  # อ่านข้อมูลชั้น
+                location_data = file.readline().strip().split(',')[1]  # อ่านข้อมูล location
+                file.readline()  # ข้ามข้อมูลประเภท
+                reader = csv.DictReader(file)
+                for row in reader:
+                    if row['DD-MM-YYYY'] == today_str:  # หาก row[0] เป็นวันปัจจุบัน
+                        # เพิ่มค่าของ data ให้กับประเภทนั้นๆ
+                        total_data = float(row['data'])  # แปลงข้อมูล row[2] เป็น float
+                        # ใช้ tuple (floor_data, location_data) เป็น key
+                        key = (floor_data, location_data)
+                        if key in zone_totals:
+                            zone_totals[key] += total_data
+                        else:
+                            zone_totals[key] = total_data
+
+    # ส่งผลลัพธ์ในรูปแบบ JSON
+    result = {
+        "data": {f"{floor}-{location}": total for (floor, location), total in zone_totals.items()}  # คืนค่าประเภทและยอดรวมของแต่ละประเภท
+    }
+    return jsonify(result)
+
+
 
 
 if __name__ == '__main__':

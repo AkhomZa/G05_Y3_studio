@@ -17,9 +17,11 @@ def generate_device_data(device_num):
     file_name = os.path.join(folder_name, f"device{device_num:02}.csv")
     with open(file_name, mode='w', newline='') as file:
         writer = csv.writer(file)
-        writer.writerow(["floor", f"{random.randint(1, 9):02}"])
-        writer.writerow(["location", f"{random.randint(1, 999):03}"])
-        writer.writerow(["type", random.choice(["plug", "light", "AC1", "AC2", "AC3", "AC4"])])
+        # writer.writerow(["floor", f"{random.randint(1, 9):02}"])
+        # writer.writerow(["floor", 4])
+        writer.writerow(["floor", f"{random.randint(3, 4):02}"])
+        writer.writerow(["location", f"{random.randint(1, 6):03}"])
+        writer.writerow(["type", random.choice(["plug", "light", "AC1", "AC2"])])
         writer.writerow(["DD-MM-YYYY", "time", "data"])
         
         # วนลูปตั้งแต่วันที่เริ่มต้นจนถึงวันนี้
@@ -45,7 +47,7 @@ def generate_device_data(device_num):
             current_date += datetime.timedelta(days=1)
 
 # สร้างไฟล์ device 01 - 10
-for device_num in range(1, 11):
+for device_num in range(1, 25):
     generate_device_data(device_num)
 
 print("Data files created successfully in 'data' folder with data from the past 31 days until today.")

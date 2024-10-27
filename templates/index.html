@@ -82,21 +82,23 @@
         <!-- Analysis Tab -->
         <div id="analysis" class="tab-content">
 
-            <div id="day_analysis">
+            <div id="day_analysis" class="analysis_container">
                 <h2>Day Analysis</h2>
                 <p>Analytical content about device data will be displayed here.</p>
-                <canvas id="day_rank_type" width="400" height="400"></canvas>
-                <canvas id="day_rank_time"></canvas>
+                <div class="chart_container">
+                    <canvas id="day_rank_type"></canvas> <!--rank by type that most used-->
+                    <canvas id="day_rank_zone"></canvas> <!--rank by zone that most used-->
+                </div>
             </div>
 
-            <div id="month_analysis">
+            <div id="month_analysis" class="analysis_container">
                 <h2>Month Analysis</h2>
                 <p>Analytical content about device data will be displayed here.</p>
                 <canvas id="month_rank_type"></canvas>
                 <canvas id="month_rank_time"></canvas>
             </div>
 
-            <div id="year_analysis">
+            <div id="year_analysis" class="analysis_container">
                 <h2>Year Analysis</h2>
                 <p>Analytical content about device data will be displayed here.</p>
                 <canvas id="year_rank_type"></canvas>
