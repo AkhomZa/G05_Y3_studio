@@ -102,7 +102,7 @@ def get_today_type_data():
     }
     return jsonify(result)
 
-@app.route('/data/day_rank_zone')  # floor, location, data
+@app.route('/data/day_rank_floor')  # floor, location, data
 def get_today_zone_data():
     # ดึงข้อมูลวันปัจจุบัน
     today_str = datetime.date.today().strftime("%d-%m-%Y")  # วันที่ปัจจุบัน

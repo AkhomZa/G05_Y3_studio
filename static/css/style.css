@@ -1,90 +1,111 @@
+/* Reset some default styles */
+* {
+    box-sizing: border-box; /* ให้การจัดการขนาดง่ายขึ้น */
+    margin: 0;
+    padding: 0;
+}
+
 body {
     font-family: Arial, sans-serif;
     margin: 20px;
+    background-color: #f4f4f4; /* สีพื้นหลังที่อ่อนนุ่ม */
+}
+
+h1 {
+    color: #333; /* สีของหัวเรื่อง */
+    text-align: center;
+    margin-bottom: 15px; /* เพิ่มพื้นที่ด้านล่าง */
 }
 
 .tab-container {
     display: flex;
-}
-
-h1 {
-    text-align: center;
+    border-radius: 5px; /* เพิ่มมุมมน */
+    overflow: hidden; /* ทำให้กรอบไม่แสดง overflow */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* เพิ่มเงาให้กับ tab container */
 }
 
 .tabs {
     display: flex;
     flex-direction: column;
-    width: 200px;
-    height: auto;
+    width: 220px; /* ขยายความกว้าง */
+    background-color: #fff; /* พื้นหลังสีขาว */
+    border-right: 1px solid #ccc; /* กรอบด้านขวา */
 }
 
 .tab-button {
-    padding: 8px;
+    padding: 12px;
     cursor: pointer;
     background: #f1f1f1;
     border: none;
-    font-size: medium;
+    font-size: 16px; /* ปรับขนาดฟอนต์ */
+    text-align: left; /* จัดข้อความไปทางซ้าย */
+    transition: background 0.3s, color 0.3s; /* เพิ่มการเปลี่ยนสีที่นุ่มนวล */
+}
+
+.tab-button:hover {
+    background: #e1e1e1;
 }
 
 .tab-button.active {
-    background: #ccc;
+    background: #ddd; /* เปลี่ยนสีเมื่อ active */
+    font-weight: bold; /* ทำให้ตัวหนา */
 }
 
 .tab-content {
     display: none;
     padding: 20px;
-    border-left: 1px solid #ccc;
-    flex-grow: 1;
-    margin-left: 60px;
-    margin-top: 60px;
+    flex-grow: 1; /* ให้ส่วนนี้ขยายเต็มที่ */
+    background: #fff; /* พื้นหลังสีขาว */
 }
 
 .tab-content.active {
-    display: block;
-}
-
-.detail-container {
-    display: flex;
-    justify-content: space-evenly;
+    display: block; /* แสดงเมื่อ active */
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
+    margin-top: 20px;
+    background-color: #fff; /* เพิ่มพื้นหลังให้กับตาราง */
 }
 
 th, td {
     border: 1px solid #ccc;
-    padding: 8px;
+    padding: 10px; /* เพิ่มพื้นที่ภายใน */
     text-align: center;
 }
 
+th {
+    background: #f2f2f2; /* สีพื้นหลังของหัวตาราง */
+    font-weight: bold; /* ตัวหนาในหัวตาราง */
+}
+
+.detail-container {
+    display: flex; /* จัดวางในรูปแบบแนวนอน */
+    justify-content: space-between; /* แบ่งพื้นที่ระหว่างกัน */
+    margin-top: 20px; /* เพิ่มพื้นที่ด้านบน */
+}
+
 #datailChart {
-    width: 100%;
-    height: 400px;
-}
-
-#detail-chart-container{
-    width: 100%;
-    height: 100%;
-}
-
-#detail-table-container{
-    width: 100%;
-    height: 100%;
+    width: 100%; /* ขยายให้เต็มพื้นที่ */
+    height: 400px; /* ความสูงของกราฟ */
+    border: 1px solid #ccc; /* กรอบรอบๆ กราฟ */
+    border-radius: 5px; /* มุมมน */
 }
 
 .analysis_container {
     width: 100%;
+    margin-top: 40px; /* เพิ่มพื้นที่ด้านบน */
 }
 
-.chart_container{
-    display: flex;
-    justify-content: space-evenly;
-    flex-flow: wrap;
+.chart_container {
+    display: flex; /* ใช้ flexbox ในการจัดเรียง */
+    justify-content: space-around; /* แบ่งพื้นที่ระหว่างกราฟ */
+    flex-wrap: wrap; /* ทำให้กราฟยืดหยุ่นในขนาดหน้าจอ */
 }
 
-#day_rank_type {
-    width: 500px;
-    height: 500px;
+.chart {
+    width: 400px; /* กำหนดความกว้างของกราฟ */
+    height: 400px; /* กำหนดความสูงของกราฟ */
+    margin: 10px; /* เพิ่มพื้นที่รอบๆ กราฟ */
 }

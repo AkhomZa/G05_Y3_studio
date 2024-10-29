@@ -166,7 +166,7 @@ function createDayRankTypeChart() {
             const data = result.data;
             const types = [];
             const totals = [];
-            for (const [type, total] of Object.entries(data)) {
+            for (const [type, total] of Object.entries(data).sort(([, a], [, b]) => b - a)) {
                 types.push(type);
                 totals.push(total);
             }
@@ -177,7 +177,7 @@ function createDayRankTypeChart() {
                 data: {
                     datasets: [{
                         data: totals,
-                        backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'], // กำหนดสีให้กับแต่ละส่วนของกราฟ
+                        backgroundColor: ['#FFAB05', '#FF6B45', '#FF2E7E', '#D52DB7', '#6050DC'], // กำหนดสีให้กับแต่ละส่วนของกราฟ
                     }],
                     labels: types
                 },
@@ -187,7 +187,7 @@ function createDayRankTypeChart() {
                     plugins: {
                         legend: {
                             display: true,
-                            position: 'right' // แสดงป้ายกำกับด้านขวาของกราฟ
+                            position: 'left' // แสดงป้ายกำกับด้านขวาของกราฟ
                         }
                     }
                 }
@@ -198,36 +198,55 @@ function createDayRankTypeChart() {
         });
 }
 
-let dayRankZoneChart;
+let dayRankFloorChart;
+let dayRankFloorLocationChart;
 
-function createDayRankZoneChart() {
-    fetch(`/data/day_rank_zone`)
+function createDayRankfloorChart() {
+    fetch(`/data/day_rank_floor`)
         .then(response => response.json())
-        .then(result => { // data format --> "floor" - "location" : zone_total_data
+        .then(result => {
             const data = result.data;
 
-            const floors_location = [];
-            const zone_totals = [];
-            for (const [floor_location, total] of Object.entries(data)) {
-                floors_location.push(floor_location);
-                zone_totals.push(total);
-            }
-            console.log(result.data);
+            const byFloorData = Object.entries(data).reverse().reduce((acc, [key, value]) => {
+                const floor = key.split('-')[0];
+                if (!acc[floor]) {
+                    acc[floor] = 0;
+                }
+                acc[floor] += value;
+                return acc;
+            }, {});
 
-            // สร้างกราฟ
-            dayRankZoneChart = new Chart(document.getElementById('day_rank_zone').getContext('2d'), {
+            dayRankFloorChart = new Chart(document.getElementById('day_rank_floor').getContext('2d'), {
                 type: 'bar',
                 data: {
                     datasets: [{
-                        data: zone_totals, // แก้ไขเป็น zone_totals
-                        backgroundColor: '#36A2EB', // กำหนดสีให้กับบาร์
+                        label: "Energy used (kWh)",
+                        data: Object.values(byFloorData),
+                        backgroundColor: "#36A2EB",
+                        hoverBackgroundColor : "#F54F52",
+                        minBarThickness: 10,
                     }],
-                    labels: floors_location
+                    labels: Object.keys(byFloorData)
                 },
-                options: { // คุณสามารถตั้งค่า options ได้ที่นี่
+                options: {
+                    indexAxis: 'y',
                     scales: {
+                        x: {
+                            display: true,
+                            ticks: {
+                                autoSkip: false
+                            }
+                        },
                         y: {
-                            beginAtZero: true
+                            beginAtZero: true,
+                        }
+                    },
+                    onClick: (event) => {
+                        const activePoints = dayRankFloorChart.getElementsAtEventForMode(event, 'nearest', { intersect: true }, false);
+                        if (activePoints.length) {
+                            const firstPoint = activePoints[0];
+                            const label = dayRankFloorChart.data.labels[firstPoint.index];
+                            createSecondChart(label, data);
                         }
                     }
                 }
@@ -238,7 +257,49 @@ function createDayRankZoneChart() {
         });
 }
 
+function createSecondChart(label, data) {
+    const sortedData = Object.entries(data)
+        .map(([floor_location, value]) => {
+            const [floor, location] = floor_location.split('-');
+            return { floor, location, value };
+        })
+        .filter(item => item.floor === label)
+        .sort((a, b) => a.location.localeCompare(b.location));
+
+    if (dayRankFloorLocationChart) {
+        dayRankFloorLocationChart.destroy();
+    }
+
+    dayRankFloorLocationChart = new Chart(document.getElementById('day_rank_floor_location').getContext('2d'), {
+        type: 'bar',
+        data: {
+            datasets: [{
+                label: "Energy used (kWh)",
+                data: sortedData.map(item => item.value),
+                backgroundColor: "#36A2EB",
+                minBarThickness: 10,
+                maxBarThickness: 30,
+            }],
+            labels: sortedData.map(item => item.location)
+        },
+        options: {
+            scales: {
+                x: {
+                    display: true,
+                    ticks: {
+                        autoSkip: false
+                    }
+                },
+                y: {
+                    beginAtZero: true,
+                }
+            }
+        }
+    });
+}
+
+
 document.addEventListener('DOMContentLoaded', function() { // run when html finish load
     createDayRankTypeChart(); // create graph
-    createDayRankZoneChart();
+    createDayRankfloorChart();
 });
